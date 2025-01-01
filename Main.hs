@@ -40,12 +40,17 @@ square x = initNode (vx ^ 2) ch n where
 
 -- compute the gradient of each node of the graph with respect to root
 backward :: Node -> Double -> Node
-backward node gradient = Node {
+backward node grad = Node {
+    -- grad = d(topnode) / d(currentnode)
     value    = value node,
-    gradient = gradient,
-    children = map (\(child, g) -> (backward child (gradient * g), g)) (children node),
+    gradient = gradient node + grad, -- += because a node may be a child to more than one node 
+    children = map (\(child, g) -> (backward child (grad * g), g)) (children node),
+    --                       g = d(current_node) / d(child_i)
     name     = name node
 }
+
+backprop :: Node -> Node
+backprop node = backward node 1
 
 main :: IO ()
 main = putStrLn ""
