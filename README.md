@@ -1,6 +1,12 @@
 # Autograd.hs
 Automatic differentiation engine in Haskell.
 
+After cloning the project, to run the tests simply execute
+```
+cabal build
+cabal run
+```
+
 References: 
 - https://pytorch.org/tutorials/beginner/introyt/autogradyt_tutorial.html
 - https://github.com/karpathy/micrograd
