@@ -3,6 +3,7 @@ module TestAutograd (tests) where
 import Test.HUnit
 import Test.QuickCheck
 import Autograd
+import BasicOp
 
 makeTestAdd :: Double -> Double -> Test
 makeTestAdd x y = TestCase (assertBool "Add: d(x+y)/d[x, y] == [1, 1]" 
