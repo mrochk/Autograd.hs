@@ -1,6 +1,10 @@
 {-# LANGUAGE InstanceSigs #-}
 
 module Autograd (
+    Node, 
+    getNodeGrad, 
+    getNodeChildrenGrad,
+    getNodeChildrenValues,
     scalar, namedScalar,
     add, add',
     mul, mul',
@@ -38,7 +42,7 @@ data Terms =
     | Two Node Node 
     | Many [Node]
 
--- Required functions to be implemented by each operator.
+{- Required functions to be implemented by each operator. -}
 class Operator op where
     getName     :: op -> Terms -> String
     getValue    :: op -> Terms -> Double
@@ -117,3 +121,14 @@ backward_ node grad = Node {
 
 backward :: Node -> Node
 backward node = backward_ node 1
+
+getNodeGrad :: Node -> Double
+getNodeGrad = _grad
+
+getNodeChildrenGrad :: Node -> [Double]
+getNodeChildrenGrad node = foldr f [] (_children node) where 
+    f (Child _ childGrad) grads = childGrad:grads 
+
+getNodeChildrenValues :: Node -> [Double]
+getNodeChildrenValues node = foldr f [] (_children node) where 
+    f (Child child _) values = _value child:values 

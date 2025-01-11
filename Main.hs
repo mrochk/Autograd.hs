@@ -1,8 +1,6 @@
 module Main where
 
-import Autograd 
+import TestAutograd (tests)
+import Test.HUnit (runTestTT)
 
-t = add' 10 20
-
-main :: IO ()
-main = putStrLn (show t)
+main = runTestTT tests
