@@ -29,31 +29,22 @@ instance Show BasicOp where
 
 instance Operator BasicOp where 
     makeName :: BasicOp -> Terms BasicOp -> String
-    makeName Add    (Two x y) = "(" ++ _name x ++ " + " ++ _name y ++ ")"
-    makeName Mul    (Two x y) = "(" ++ _name x ++ " * " ++ _name y ++ ")"
-    makeName Square (One x)   = "(" ++ _name x ++ ")^2"
+    makeName Add    (Two x y) = "(" ++ getName x ++ " + " ++ getName y ++ ")"
+    makeName Mul    (Two x y) = "(" ++ getName x ++ " * " ++ getName y ++ ")"
+    makeName Square (One x)   = "(" ++ getName x ++ ")^2"
     makeName _      _         = error ""  
 
     makeValue :: BasicOp -> Terms BasicOp -> Double
-    makeValue Add    (Two x y) = _value x + _value y
-    makeValue Mul    (Two x y) = _value x * _value y
-    makeValue Square (One x)   = _value x ** 2
+    makeValue Add    (Two x y) = getValue x + getValue y
+    makeValue Mul    (Two x y) = getValue x * getValue y
+    makeValue Square (One x)   = getValue x ** 2
     makeValue _      _         = error ""
 
     makeChildren :: BasicOp -> Terms BasicOp -> [Child BasicOp]
     makeChildren Add    (Two x y) = [Child x 1, Child y 1] -- d(x+y)/dx = 1
-    makeChildren Mul    (Two x y) = [Child x (_value y), Child y (_value x)] -- dxy/dx = y
-    makeChildren Square (One x)   = [Child x (_value x * 2)] -- dx^2/dx = 2x
+    makeChildren Mul    (Two x y) = [Child x (getValue y), Child y (getValue x)] -- dxy/dx = y
+    makeChildren Square (One x)   = [Child x (getValue x * 2)] -- dx^2/dx = 2x
     makeChildren _      _         = error ""
-
-initNode :: Operator op => Double -> [Child op] -> String -> op -> (Node op)
-initNode value children name op = Node {
-    _name     = name,
-    _value    = value,
-    _op       = op,
-    _grad     = 0,
-    _children = children
-}
 
 namedScalar :: Double -> String -> (Node BasicOp)
 namedScalar value name = initNode value [] name Init

@@ -3,18 +3,23 @@
 
 module Autograd (
     Operator(..),
-    Node(..), 
+    Node(Node), initNode,
     Terms(..), 
     Child(..), 
     backward,
+    getName,
+    getValue,
     getNodeChildrenGrad, 
     getNodeChildrenValues,
 ) where
 
 {- Required functions to be implemented by each operator. -}
 class (Show op) => Operator op where
+    -- makeName specifies how to combine the terms' names
     makeName     :: op -> (Terms op) -> String
+    -- makeValue specifies how to combine the terms' values
     makeValue    :: op -> (Terms op) -> Double
+    -- makeValue specifies the gradient of each child wrt node
     makeChildren :: op -> (Terms op) -> [Child op]
 
 -- Possible inputs to an operator.
@@ -25,7 +30,6 @@ data Terms op = Operator op =>
 
 -- A pair of [ child, d(node)/d(child) ].
 data Child op = Operator op => Child (Node op) Double 
-
 deriving instance Show (Child op)
 
 data Node op = Operator op => Node {
@@ -35,8 +39,16 @@ data Node op = Operator op => Node {
     _grad     :: Double, -- gradient w.r.t root node
     _children :: [Child op] -- (child, d(node)/d(child))
 } 
-
 deriving instance Show (Node op)
+
+initNode :: Operator op => Double -> [Child op] -> String -> op -> (Node op)
+initNode value children name op = Node {
+    _name     = name,
+    _value    = value,
+    _op       = op,
+    _grad     = 0,
+    _children = children
+}
 
 -- Compute the gradient of each node with respect to root node.
 backward_ :: Operator op => Node op -> Double -> Node op
@@ -57,10 +69,16 @@ backward node = backward_ node 1
 getNodeGrad :: Node op -> Double
 getNodeGrad = _grad
 
+getName :: Node op -> String
+getName = _name
+
+getValue :: Node op -> Double
+getValue = _value
+
 getNodeChildrenGrad :: Node op -> [Double]
 getNodeChildrenGrad node = foldr f [] (_children node) where 
     f (Child _ childGrad) grads = childGrad:grads 
 
 getNodeChildrenValues :: Node op -> [Double]
 getNodeChildrenValues node = foldr f [] (_children node) where 
-    f (Child child _) values = _value child:values 
+    f (Child child _) values = getValue child:values 
