@@ -1,6 +1,11 @@
 module Main where
 
-import TestAutograd (tests)
-import Test.HUnit (runTestTT)
+import Test.QuickCheck (quickCheck)
+import TestAutograd
 
-main = runTestTT tests
+main :: IO ()
+main = do
+    putStrLn "\nProperty based testing:"
+    quickCheck prop_Add
+    quickCheck prop_Mul
+    quickCheck prop_Square

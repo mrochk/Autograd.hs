@@ -3,10 +3,13 @@
 
 module Autograd (
     Operator(..),
-    Node(..), Terms(..), Child(..), 
-    getNodeChildrenGrad, getNodeChildrenValues,
+    Node(..), 
+    Terms(..), 
+    Child(..), 
     backward,
-    ) where
+    getNodeChildrenGrad, 
+    getNodeChildrenValues,
+) where
 
 {- Required functions to be implemented by each operator. -}
 class (Show op) => Operator op where

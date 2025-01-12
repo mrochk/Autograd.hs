@@ -2,10 +2,14 @@
 
 module BasicOp (
     BasicOp,
-    scalar, namedScalar,
-    add, add',
-    mul, mul',
-    square, square', 
+    scalar, 
+    namedScalar,
+    add, 
+    add',
+    mul, 
+    mul',
+    square, 
+    square', 
 ) where
 
 import Autograd
