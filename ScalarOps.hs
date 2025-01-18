@@ -1,6 +1,6 @@
 {-# LANGUAGE InstanceSigs #-}
 
-module BasicOp (
+module ScalarOps (
     BasicOp,
     scalar, 
     namedScalar,
@@ -15,10 +15,10 @@ module BasicOp (
 import Autograd
 
 data BasicOp = 
-    Init 
-    | Add 
-    | Mul 
-    | Square 
+    Init   |
+    Add    |
+    Mul    |
+    Square 
 
 instance Show BasicOp where
     show :: BasicOp -> String
@@ -51,12 +51,6 @@ namedScalar value name = makeNode value [] name Init
 
 scalar :: Double -> (Node BasicOp)
 scalar value = namedScalar value (show value)
-
-compute :: Operator op => op -> (Terms op) -> (Node op)
-compute op terms = makeNode value children name op where 
-    value    = makeValue    op terms
-    name     = makeName     op terms 
-    children = makeChildren op terms
 
 add :: (Node BasicOp) -> (Node BasicOp) -> (Node BasicOp)
 add x y = compute Add (Two x y)

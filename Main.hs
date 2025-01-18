@@ -3,7 +3,7 @@ module Main where
 import Test.QuickCheck (quickCheck)
 import TestAutograd
 import Autograd
-import BasicOp
+import ScalarOps
 
 main :: IO ()
 main = do

@@ -6,7 +6,7 @@ module TestAutograd (
 
 import Test.QuickCheck
 import Autograd
-import BasicOp
+import ScalarOps
 
 prop_Add :: Double -> Double -> Bool
 prop_Add x y = all (1 ==) $ getNodeChildrenGrad node

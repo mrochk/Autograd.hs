@@ -11,6 +11,7 @@ module Autograd (
     backward,
     getName,
     getValue,
+    compute,
     getNodeChildrenGrad, 
     getNodeChildrenValues,
 ) where
@@ -53,6 +54,12 @@ makeNode value children name op = Node {
     _grad     = 0,
     _children = children
 }
+
+compute :: Operator op => op -> (Terms op) -> (Node op)
+compute op terms = makeNode value children name op where 
+    value    = makeValue    op terms
+    name     = makeName     op terms 
+    children = makeChildren op terms
 
 {- Compute the gradient of each node with respect to root node. -}
 backward_ :: Operator op => Node op -> Double -> Node op
