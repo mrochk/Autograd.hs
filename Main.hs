@@ -2,6 +2,8 @@ module Main where
 
 import Test.QuickCheck (quickCheck)
 import TestAutograd
+import Autograd
+import BasicOp
 
 main :: IO ()
 main = do

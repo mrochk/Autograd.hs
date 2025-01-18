@@ -41,19 +41,19 @@ instance Operator BasicOp where
     makeValue _      _         = error ""
 
     makeChildren :: BasicOp -> Terms BasicOp -> [Child BasicOp]
-    makeChildren Add    (Two x y) = [Child x 1, Child y 1] -- d(x+y)/dx = 1
-    makeChildren Mul    (Two x y) = [Child x (getValue y), Child y (getValue x)] -- dxy/dx = y
-    makeChildren Square (One x)   = [Child x (getValue x * 2)] -- dx^2/dx = 2x
+    makeChildren Add    (Two x y) = [(x, 1), (y, 1)] -- d(x+y)/dx = 1
+    makeChildren Mul    (Two x y) = [(x, getValue y), (y, getValue x)] -- dxy/dx = y
+    makeChildren Square (One x)   = [(x, getValue x*2)] -- dx^2/dx = 2x
     makeChildren _      _         = error ""
 
 namedScalar :: Double -> String -> (Node BasicOp)
-namedScalar value name = initNode value [] name Init
+namedScalar value name = makeNode value [] name Init
 
 scalar :: Double -> (Node BasicOp)
 scalar value = namedScalar value (show value)
 
 compute :: Operator op => op -> (Terms op) -> (Node op)
-compute op terms = initNode value children name op where 
+compute op terms = makeNode value children name op where 
     value    = makeValue    op terms
     name     = makeName     op terms 
     children = makeChildren op terms
@@ -64,7 +64,7 @@ add x y = compute Add (Two x y)
 add' :: Double -> Double -> (Node BasicOp)
 add' x y = add (scalar x) (scalar y)
 
-mul :: Autograd.Node BasicOp -> Node BasicOp -> Node BasicOp
+mul :: Node BasicOp -> Node BasicOp -> Node BasicOp
 mul x y = compute Mul (Two x y)
 
 mul' :: Double -> Double -> Node BasicOp
@@ -74,5 +74,5 @@ square :: Node BasicOp -> Node BasicOp
 square x = compute Square (One x)
 
 square' :: Double -> Node BasicOp
-square' = square . scalar
+square' x = square (scalar x) 
 
