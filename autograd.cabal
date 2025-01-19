@@ -12,8 +12,12 @@ maintainer:          mrochkoulets@gmail.com
 build-type:          Simple
 extra-source-files:  README.md
 
+source-repository head
+  type:              git
+  location:          https://github.com/mrochk/autograd.hs
+
 executable autograd
   main-is:             Main.hs
   other-modules:       Autograd, TestAutograd, ScalarOps
-  build-depends:       base >=4.10, QuickCheck, containers
+  build-depends:       base >=4.10, HUnit, QuickCheck, containers
   default-language:    Haskell2010

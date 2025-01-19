@@ -3,20 +3,23 @@
 {-# LANGUAGE InstanceSigs #-}
 
 module Autograd (
-    Operator(..),
-    Node(Node), makeNode,
-    Terms(..), 
+    Node(Node), 
     Child(..), 
+
+    Operator(..),
+    Terms(..), 
+
     gradients,
     backward,
-    getName,
-    getValue,
+
     compute,
-    getNodeChildrenGrad, 
-    getNodeChildrenValues,
+
+    makeNode,
+    getName, getValue, getOp, getGradient,
+    getChildrenGradients, getChildrenValues,
 ) where
 
-import qualified Data.Map  as Map 
+import qualified Data.Map as Map 
 
 {- Required functions to be implemented by each operator. -}
 class (Show op) => Operator op where
@@ -89,7 +92,7 @@ fillMap node m
   | otherwise     = foldr union Map.empty children
   where 
     children             = getChildren node
-    gradient             = getNodeGrad node
+    gradient             = getGradient node
     identifier           = getName     node
     adjustedMap          = insertOrAdd identifier gradient m  
     union (child, _) map = Map.unionWith (+) (fillMap child adjustedMap) map
@@ -100,22 +103,25 @@ insertOrAdd key value map = case Map.lookup key map of
       Nothing -> Map.insert key value map
       Just  _ -> Map.adjust (+ value) key map
 
-getNodeGrad :: Node op -> Double
-getNodeGrad = _grad
-
 getName :: Node op -> String
 getName = _name
 
 getValue :: Node op -> Double
 getValue = _value
 
+getOp :: Node op -> op
+getOp = _op
+
+getGradient :: Node op -> Double
+getGradient = _grad
+
 getChildren :: Node op -> [Child op]
 getChildren = _children
 
-getNodeChildrenGrad :: Node op -> [Double]
-getNodeChildrenGrad node = foldr f [] (_children node) where 
+getChildrenGradients :: Node op -> [Double]
+getChildrenGradients node = foldr f [] (_children node) where 
     f (_, childGrad) grads = childGrad:grads 
 
-getNodeChildrenValues :: Node op -> [Double]
-getNodeChildrenValues node = foldr f [] (_children node) where 
+getChildrenValues :: Node op -> [Double]
+getChildrenValues node = foldr f [] (_children node) where 
     f (child, _) values = getValue child:values 
